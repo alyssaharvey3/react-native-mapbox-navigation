@@ -16,6 +16,7 @@ type OnRouteProgressChangeEvent = {
     durationRemaining: number;
     fractionTraveled: number;
     distanceRemaining: number;
+    maneuvers: string[];
   };
 };
 
