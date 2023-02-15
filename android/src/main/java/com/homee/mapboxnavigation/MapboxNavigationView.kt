@@ -10,7 +10,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Arguments.*
 import com.facebook.react.uimanager.ThemedReactContext
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
@@ -78,6 +78,8 @@ import com.mapbox.navigation.ui.voice.model.SpeechValue
 import com.mapbox.navigation.ui.voice.model.SpeechVolume
 import java.util.Locale
 import com.facebook.react.uimanager.events.RCTEventEmitter
+import com.google.gson.Gson
+import com.mapbox.navigation.ui.maneuver.model.Maneuver
 
 class MapboxNavigationView(private val context: ThemedReactContext, private val accessToken: String?) :
     FrameLayout(context.baseContext) {
@@ -299,7 +301,7 @@ class MapboxNavigationView(private val context: ThemedReactContext, private val 
             viewportDataSource.onLocationChanged(enhancedLocation)
             viewportDataSource.evaluate()
 
-            val event = Arguments.createMap()
+            val event = createMap()
             event.putDouble("longitude", enhancedLocation.longitude)
             event.putDouble("latitude", enhancedLocation.latitude)
             context
@@ -348,11 +350,12 @@ class MapboxNavigationView(private val context: ThemedReactContext, private val 
             tripProgressApi.getTripProgress(routeProgress)
         )
 
-        val event = Arguments.createMap()
+        val event = createMap()
         event.putDouble("distanceTraveled", routeProgress.distanceTraveled.toDouble())
         event.putDouble("durationRemaining", routeProgress.durationRemaining.toDouble())
         event.putDouble("fractionTraveled", routeProgress.fractionTraveled.toDouble())
         event.putDouble("distanceRemaining", routeProgress.distanceRemaining.toDouble())
+        event.putArray("maneuvers", fromList(maneuvers.value?.map { maneuver -> JSManeuver(maneuver).toJSONString() }))
         context
             .getJSModule(RCTEventEmitter::class.java)
             .receiveEvent(id, "onRouteProgressChange", event)
@@ -412,7 +415,7 @@ class MapboxNavigationView(private val context: ThemedReactContext, private val 
         }
 
         override fun onFinalDestinationArrival(routeProgress: RouteProgress) {
-            val event = Arguments.createMap()
+            val event = createMap()
             event.putString("onArrive", "")
             context
                 .getJSModule(RCTEventEmitter::class.java)
@@ -590,7 +593,7 @@ class MapboxNavigationView(private val context: ThemedReactContext, private val 
         // initialize view interactions
         binding.stop.setOnClickListener {
 //            clearRouteAndStopNavigation() // TODO: figure out how we want to address this since a user cannot reinitialize a route once it is canceled.
-            val event = Arguments.createMap()
+            val event = createMap()
             event.putString("onCancelNavigation", "Navigation Closed")
             context
                 .getJSModule(RCTEventEmitter::class.java)
@@ -686,7 +689,7 @@ class MapboxNavigationView(private val context: ThemedReactContext, private val 
     }
 
     private fun sendErrorToReact(error: String?) {
-        val event = Arguments.createMap()
+        val event = createMap()
         event.putString("error", error)
         context
             .getJSModule(RCTEventEmitter::class.java)
@@ -763,5 +766,31 @@ class MapboxNavigationView(private val context: ThemedReactContext, private val 
 
     fun setMute(mute: Boolean) {
         this.isVoiceInstructionsMuted = mute
+    }
+}
+
+class JSManeuver constructor (maneuver: Maneuver) {
+    val id: String
+    val drivingSide: String?
+    val text: String
+    val modifier: String?
+    val type: String?
+    val degrees: Double?
+    val stepDistanceRemaining: Double?
+    val stepTotalDistance: Double
+
+    init {
+        id = maneuver.primary.id
+        drivingSide = maneuver.primary.drivingSide
+        modifier = maneuver.primary.modifier
+        text = maneuver.primary.text
+        type = maneuver.primary.type
+        degrees = maneuver.primary.degrees
+        stepDistanceRemaining = maneuver.stepDistance?.distanceRemaining
+        stepTotalDistance = maneuver.stepDistance.totalDistance
+    }
+
+    fun toJSONString(): String {
+        return Gson().toJson(this)
     }
 }
