@@ -656,10 +656,9 @@ class MapboxNavigationView(private val context: ThemedReactContext, private val 
         try {
             mapboxNavigation.requestRoutes(
                 RouteOptions.builder()
-                    .applyDefaultNavigationOptions()
+                    .applyDefaultNavigationOptions(DirectionsCriteria.PROFILE_CYCLING)
                     .applyLanguageAndVoiceUnitOptions(context)
                     .coordinatesList(listOf(origin, destination))
-                    .profile(DirectionsCriteria.PROFILE_CYCLING)
                     .steps(true)
                     .build(),
                 object : RouterCallback {
