@@ -1,16 +1,16 @@
 /** @type {[number, number]}
  * Provide an array with longitude and latitude [$longitude, $latitude]
  */
-type Coordinate = [number, number];
+export type Coordinate = [number, number];
 
-type OnLocationChangeEvent = {
+export type OnLocationChangeEvent = {
   nativeEvent?: {
     latitude: number;
     longitude: number;
   };
 };
 
-type OnRouteProgressChangeEvent = {
+export type OnRouteProgressChangeEvent = {
   nativeEvent?: {
     distanceTraveled: number;
     durationRemaining: number;
@@ -20,11 +20,22 @@ type OnRouteProgressChangeEvent = {
   };
 };
 
-type OnErrorEvent = {
+export type OnErrorEvent = {
   nativeEvent?: {
     message?: string;
   };
 };
+
+export type Maneuver = {
+  id: string
+  drivingSide?: string
+  text: string
+  modifier?: string
+  type?: string
+  degrees?: number
+  stepDistanceRemaining?: number
+  stepTotalDistance: number
+}
 
 export interface IMapboxNavigationProps {
   origin: Coordinate;
