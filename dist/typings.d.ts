@@ -23,7 +23,6 @@ export declare type OnErrorEvent = {
     };
 };
 export declare type Maneuver = {
-    id: string
     drivingSide?: string
     text: string
     modifier?: string

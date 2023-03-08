@@ -769,7 +769,6 @@ class MapboxNavigationView(private val context: ThemedReactContext, private val 
 }
 
 class JSManeuver constructor (maneuver: Maneuver) {
-    val id: String
     val drivingSide: String?
     val text: String
     val modifier: String?
@@ -779,7 +778,6 @@ class JSManeuver constructor (maneuver: Maneuver) {
     val stepTotalDistance: Double
 
     init {
-        id = maneuver.primary.id
         drivingSide = maneuver.primary.drivingSide
         modifier = maneuver.primary.modifier
         text = maneuver.primary.text
