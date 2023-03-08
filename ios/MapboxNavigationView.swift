@@ -115,11 +115,26 @@ class MapboxNavigationView: UIView, NavigationViewControllerDelegate {
   }
   
   func navigationViewController(_ navigationViewController: NavigationViewController, didUpdate progress: RouteProgress, with location: CLLocation, rawLocation: CLLocation) {
-    onLocationChange?(["longitude": location.coordinate.longitude, "latitude": location.coordinate.latitude])
-    onRouteProgressChange?(["distanceTraveled": progress.distanceTraveled,
+      var maneuverArray = [String]()
+      progress.currentLegProgress.leg.steps.forEach { step in
+          let maneuver: NSMutableDictionary = NSMutableDictionary()
+          maneuver.setValue(step.drivingSide.rawValue, forKey: "drivingSide")
+          maneuver.setValue(step.distance, forKey: "stepTotalDistance")
+          maneuver.setValue(step.instructions, forKey: "text")
+          maneuver.setValue(step.maneuverType.rawValue, forKey: "type")
+          maneuver.setValue(step.maneuverDirection?.rawValue, forKey: "modifier")
+          
+          let jsonData = try! JSONSerialization.data(withJSONObject: maneuver, options: [])
+          let maneuverJsonString = String(data: jsonData, encoding: .utf8)!
+          maneuverArray.append(maneuverJsonString)
+      }
+
+      onRouteProgressChange?(["distanceTraveled": progress.distanceTraveled,
                             "durationRemaining": progress.durationRemaining,
                             "fractionTraveled": progress.fractionTraveled,
-                            "distanceRemaining": progress.distanceRemaining])
+                            "distanceRemaining": progress.distanceRemaining,
+                            "maneuvers": maneuverArray])
+      onLocationChange?(["longitude": location.coordinate.longitude, "latitude": location.coordinate.latitude])
   }
   
   func navigationViewControllerDidDismiss(_ navigationViewController: NavigationViewController, byCanceling canceled: Bool) {
