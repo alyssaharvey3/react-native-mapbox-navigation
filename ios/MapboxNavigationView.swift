@@ -75,7 +75,7 @@ class MapboxNavigationView: UIView, NavigationViewControllerDelegate {
     let destinationWaypoint = Waypoint(coordinate: CLLocationCoordinate2D(latitude: destination[1] as! CLLocationDegrees, longitude: destination[0] as! CLLocationDegrees))
 
     // let options = NavigationRouteOptions(waypoints: [originWaypoint, destinationWaypoint])
-    let options = NavigationRouteOptions(waypoints: [originWaypoint, destinationWaypoint], profileIdentifier: .automobileAvoidingTraffic)
+    let options = NavigationRouteOptions(waypoints: [originWaypoint, destinationWaypoint], profileIdentifier: .cycling)
 
     Directions.shared.calculate(options) { [weak self] (_, result) in
       guard let strongSelf = self, let parentVC = strongSelf.parentViewController else {
