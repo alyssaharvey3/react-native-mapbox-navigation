@@ -79,6 +79,10 @@ import com.mapbox.navigation.ui.voice.model.SpeechVolume
 import java.util.Locale
 import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.google.gson.Gson
+import com.mapbox.maps.plugin.attribution.attribution
+import com.mapbox.maps.plugin.compass.compass
+import com.mapbox.maps.plugin.logo.logo
+import com.mapbox.maps.plugin.scalebar.scalebar
 import com.mapbox.navigation.ui.maneuver.model.Maneuver
 
 class MapboxNavigationView(private val context: ThemedReactContext, private val accessToken: String?) :
@@ -466,7 +470,18 @@ class MapboxNavigationView(private val context: ThemedReactContext, private val 
         }
 
         mapboxMap = binding.mapView.getMapboxMap()
-
+        binding.mapView.logo.updateSettings {
+            enabled = false
+        }
+        binding.mapView.attribution.updateSettings {
+            enabled = false
+        }
+        binding.mapView.compass.updateSettings {
+            enabled = false
+        }
+        binding.mapView.scalebar.updateSettings {
+            enabled = false
+        }
         // initialize the location puck
         binding.mapView.location.apply {
             this.locationPuck = LocationPuck2D(
