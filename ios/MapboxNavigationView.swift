@@ -76,7 +76,7 @@ class MapboxNavigationView: UIView, NavigationViewControllerDelegate {
 
     // let options = NavigationRouteOptions(waypoints: [originWaypoint, destinationWaypoint])
     let options = NavigationRouteOptions(waypoints: [originWaypoint, destinationWaypoint], profileIdentifier: .cycling)
-
+      
     Directions.shared.calculate(options) { [weak self] (_, result) in
       guard let strongSelf = self, let parentVC = strongSelf.parentViewController else {
         return
@@ -89,7 +89,6 @@ class MapboxNavigationView: UIView, NavigationViewControllerDelegate {
           guard let weakSelf = self else {
             return
           }
-          
           let navigationService = MapboxNavigationService(routeResponse: response, routeIndex: 0, routeOptions: options, simulating: strongSelf.shouldSimulateRoute ? .always : .never)
           
           let navigationOptions = NavigationOptions(navigationService: navigationService)
@@ -99,6 +98,7 @@ class MapboxNavigationView: UIView, NavigationViewControllerDelegate {
           StatusView.appearance().isHidden = strongSelf.hideStatusView
 
           NavigationSettings.shared.voiceMuted = strongSelf.mute;
+          NavigationSettings.shared.distanceUnit = LengthFormatter.Unit.kilometer;
           
           vc.delegate = strongSelf
         
