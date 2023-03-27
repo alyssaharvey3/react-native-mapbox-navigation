@@ -359,7 +359,10 @@ class MapboxNavigationView(private val context: ThemedReactContext, private val 
         event.putDouble("durationRemaining", routeProgress.durationRemaining.toDouble())
         event.putDouble("fractionTraveled", routeProgress.fractionTraveled.toDouble())
         event.putDouble("distanceRemaining", routeProgress.distanceRemaining.toDouble())
-        event.putArray("maneuvers", fromList(maneuvers.value?.map { maneuver -> JSManeuver(maneuver).toJSONString() }))
+        if (maneuvers.value != null) {
+            event.putArray("maneuvers", fromList(maneuvers.value?.map { maneuver -> JSManeuver(maneuver).toJSONString() }))
+        }
+        
         context
             .getJSModule(RCTEventEmitter::class.java)
             .receiveEvent(id, "onRouteProgressChange", event)
